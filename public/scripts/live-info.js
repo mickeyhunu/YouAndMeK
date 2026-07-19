@@ -4,17 +4,27 @@
   const STORE_NO = "4";
 
   const $ = (id) => document.getElementById(id);
-  const status = $("live-info-status");
-  const roomUpdated = $("live-room-updated");
-  const roomCount = $("live-room-count");
-  const waitCount = $("live-wait-count");
-  const roomDetail = $("live-room-detail");
-  const entryCount = $("live-entry-count");
-  const entryList = $("live-entry-list");
+  let latestLiveSignal = null;
+  let renderInProgress = false;
 
-  if (!status || !roomUpdated || !roomCount || !waitCount || !roomDetail || !entryCount || !entryList) {
-    return;
-  }
+  const getElements = () => ({
+    status: $("live-info-status"),
+    roomUpdated: $("live-room-updated"),
+    roomCount: $("live-room-count"),
+    waitCount: $("live-wait-count"),
+    roomDetail: $("live-room-detail"),
+    entryCount: $("live-entry-count"),
+    entryList: $("live-entry-list"),
+  });
+
+  const hasRequiredElements = (elements) =>
+    elements.status &&
+    elements.roomUpdated &&
+    elements.roomCount &&
+    elements.waitCount &&
+    elements.roomDetail &&
+    elements.entryCount &&
+    elements.entryList;
 
   const unwrapPayload = (payload) => {
     let current = payload;
@@ -136,7 +146,7 @@
     }
   };
 
-  const renderRoomDetails = (room) => {
+  const renderRoomDetails = (roomDetail, room) => {
     const roomEntries = parseRoomDetail(room?.roomDetail);
 
     if (!roomEntries.length) {
@@ -149,7 +159,7 @@
       .join("")}</div></div>`;
   };
 
-  const renderEntries = (entries) => {
+  const renderEntries = (entryList, entries) => {
     if (!entries.length) {
       entryList.innerHTML = '<p class="live-empty">오늘 엔트리 정보가 없습니다.</p>';
       return;
@@ -164,34 +174,69 @@
       .join("");
   };
 
-  const loadLiveSignal = async () => {
-    try {
-      const data = await fetchLiveSignal();
-      const rooms = getContent(data.room);
-      const entries = getContent(data.entry);
-      console.log("[LiveSignal] normalized room rows:", rooms);
-      console.log("[LiveSignal] normalized entry rows:", entries);
-      const room = rooms[0] || {};
+  const renderLiveSignal = (data) => {
+    const elements = getElements();
+    if (!hasRequiredElements(elements)) return false;
 
-      roomCount.textContent = formatValue(room.roomInfo ?? room.availableRoom ?? room.availableRooms ?? room.roomCount);
-      waitCount.textContent = formatValue(room.waitInfo ?? room.waiting ?? room.waitCount);
-      roomUpdated.textContent = formatUpdatedAt(room.snapshotAt || room.updatedAt || room.createdAt);
-      entryCount.textContent = `총 ${getTotalElements(data.entry, entries.length)}명`;
-      renderRoomDetails(room);
-      renderEntries(entries);
-      status.textContent = `storeNo ${data.storeNo || STORE_NO} 기준 실시간 정보를 불러왔습니다.`;
+    const { status, roomUpdated, roomCount, waitCount, roomDetail, entryCount, entryList } = elements;
+    const rooms = getContent(data.room);
+    const entries = getContent(data.entry);
+    console.log("[LiveSignal] normalized room rows:", rooms);
+    console.log("[LiveSignal] normalized entry rows:", entries);
+    const room = rooms[0] || {};
+
+    roomCount.textContent = formatValue(room.roomInfo ?? room.availableRoom ?? room.availableRooms ?? room.roomCount);
+    waitCount.textContent = formatValue(room.waitInfo ?? room.waiting ?? room.waitCount);
+    roomUpdated.textContent = formatUpdatedAt(room.snapshotAt || room.updatedAt || room.createdAt);
+    entryCount.textContent = `총 ${getTotalElements(data.entry, entries.length)}명`;
+    renderRoomDetails(roomDetail, room);
+    renderEntries(entryList, entries);
+    status.textContent = `storeNo ${data.storeNo || STORE_NO} 기준 실시간 정보를 불러왔습니다.`;
+    return true;
+  };
+
+  const renderLiveSignalError = () => {
+    const elements = getElements();
+    if (!hasRequiredElements(elements)) return;
+
+    elements.status.textContent = "실시간 정보를 불러오지 못했습니다. 잠시 후 다시 확인해 주세요.";
+    elements.roomUpdated.textContent = "확인 실패";
+    elements.roomDetail.innerHTML = '<p class="live-empty">룸 상세 정보를 불러오지 못했습니다.</p>';
+    elements.entryList.innerHTML = '<p class="live-empty">엔트리 정보를 불러오지 못했습니다.</p>';
+  };
+
+  const loadLiveSignal = async () => {
+    if (renderInProgress) return;
+    renderInProgress = true;
+    try {
+      latestLiveSignal = await fetchLiveSignal();
+      renderLiveSignal(latestLiveSignal);
     } catch (error) {
       console.error("Live signal render failed:", error);
-      status.textContent = "실시간 정보를 불러오지 못했습니다. 잠시 후 다시 확인해 주세요.";
-      roomUpdated.textContent = "확인 실패";
-      roomDetail.innerHTML = '<p class="live-empty">룸 상세 정보를 불러오지 못했습니다.</p>';
-      entryList.innerHTML = '<p class="live-empty">엔트리 정보를 불러오지 못했습니다.</p>';
+      renderLiveSignalError();
+    } finally {
+      renderInProgress = false;
     }
   };
 
+  const rerenderLatestLiveSignal = () => {
+    if (latestLiveSignal) renderLiveSignal(latestLiveSignal);
+  };
+
+  const scheduleRerenders = () => {
+    [0, 100, 500, 1500].forEach((delay) => {
+      window.setTimeout(rerenderLatestLiveSignal, delay);
+    });
+    window.addEventListener("load", rerenderLatestLiveSignal, { once: true });
+  };
+
+  const startLiveSignal = () => {
+    loadLiveSignal().finally(scheduleRerenders);
+  };
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", loadLiveSignal, { once: true });
+    document.addEventListener("DOMContentLoaded", startLiveSignal, { once: true });
   } else {
-    loadLiveSignal();
+    startLiveSignal();
   }
 })();
