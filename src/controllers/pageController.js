@@ -89,6 +89,7 @@ const COMMUNITY_REVIEW_KEYWORDS = new Set(["유앤미", "유엔미", "ㅇㅇㅁ"
 const COMMUNITY_REVIEW_FEED_KEYWORDS = ["유앤미", "유엔미", "ㅇㅇㅁ"];
 const LIVE_SIGNAL_API = "https://nightmens.com/api/live/signal";
 const LIVE_SIGNAL_STORE_NO = "4";
+const LIVE_SIGNAL_FETCH_TIMEOUT_MS = 8000;
 
 const toValidDate = (value) => {
   if (!value) return new Date();
@@ -141,19 +142,36 @@ const fetchCommunityReviewFeedItems = async () => {
     }));
 };
 
+const fetchLiveSignal = async (type, limit) => {
+  const apiUrl = new URL(LIVE_SIGNAL_API);
+  apiUrl.searchParams.set("storeNo", LIVE_SIGNAL_STORE_NO);
+  apiUrl.searchParams.set("type", type);
+  apiUrl.searchParams.set("limit", String(limit));
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), LIVE_SIGNAL_FETCH_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(apiUrl, { signal: controller.signal });
+    if (!response.ok) {
+      const error = new Error(`Failed to fetch ${type} live signal`);
+      error.status = response.status;
+      throw error;
+    }
+
+    return response.json();
+  } finally {
+    clearTimeout(timeout);
+  }
+};
+
+const emptyLiveSignal = () => ({ content: [], totalElements: 0 });
+
 const fetchLiveSignalFeedItems = async () => {
-  const [roomResponse, entryResponse] = await Promise.allSettled(
-    ["room", "entry"].map((type) => {
-      const apiUrl = new URL(LIVE_SIGNAL_API);
-      apiUrl.searchParams.set("storeNo", LIVE_SIGNAL_STORE_NO);
-      apiUrl.searchParams.set("type", type);
-      apiUrl.searchParams.set("limit", type === "room" ? "1" : "200");
-      return fetch(apiUrl).then((response) => {
-        if (!response.ok) throw new Error(`Failed to fetch ${type} live signal for RSS`);
-        return response.json();
-      });
-    })
-  );
+  const [roomResponse, entryResponse] = await Promise.allSettled([
+    fetchLiveSignal("room", 1),
+    fetchLiveSignal("entry", 200),
+  ]);
 
   const items = [];
   if (roomResponse.status === "fulfilled") {
@@ -209,39 +227,29 @@ export const renderRssFeed = async (_req, res) => {
 };
 
 export const renderLiveSignal = async (_req, res) => {
-  try {
-    const [roomResponse, entryResponse] = await Promise.all(
-      ["room", "entry"].map(async (type) => {
-        const apiUrl = new URL(LIVE_SIGNAL_API);
-        apiUrl.searchParams.set("storeNo", LIVE_SIGNAL_STORE_NO);
-        apiUrl.searchParams.set("type", type);
-        apiUrl.searchParams.set("limit", type === "room" ? "1" : "200");
+  const [roomResult, entryResult] = await Promise.allSettled([
+    fetchLiveSignal("room", 1),
+    fetchLiveSignal("entry", 200),
+  ]);
 
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-          const error = new Error(`Failed to fetch ${type} live signal`);
-          error.status = response.status;
-          throw error;
-        }
+  const roomFailed = roomResult.status === "rejected";
+  const entryFailed = entryResult.status === "rejected";
 
-        return response.json();
-      })
-    );
+  if (roomFailed) console.error("Live room signal fetch failed:", roomResult.reason);
+  if (entryFailed) console.error("Live entry signal fetch failed:", entryResult.reason);
 
-    res.set("Cache-Control", "no-store");
-    res.json({
-      storeNo: LIVE_SIGNAL_STORE_NO,
-      room: roomResponse,
-      entry: entryResponse,
-    });
-  } catch (error) {
-    console.error("Live signal fetch failed:", error);
-    res.status(error.status || 502).json({
-      ok: false,
-      message: "Failed to fetch live signal",
-      storeNo: LIVE_SIGNAL_STORE_NO,
-    });
-  }
+  res.set("Cache-Control", "no-store");
+  res.status(roomFailed && entryFailed ? 502 : 200).json({
+    ok: !(roomFailed && entryFailed),
+    message: roomFailed && entryFailed ? "Failed to fetch live signal" : undefined,
+    storeNo: LIVE_SIGNAL_STORE_NO,
+    room: roomFailed ? emptyLiveSignal() : roomResult.value,
+    entry: entryFailed ? emptyLiveSignal() : entryResult.value,
+    errors: {
+      room: roomFailed,
+      entry: entryFailed,
+    },
+  });
 };
 
 export const renderCommunityReviews = async (req, res) => {
