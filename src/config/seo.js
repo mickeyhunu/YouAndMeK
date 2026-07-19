@@ -1,6 +1,6 @@
 export const siteMetadata = {
   name: "강남 유앤미 공식 홈페이지 | Gangnam You&Me Official",
-  baseUrl: "https://gangnamyouandme.com",
+  baseUrl: "https://gangnamyounme.com",
   language: "ko",
   description:
     "강남 유앤미 공식 홈페이지. 프리미엄 라운지 & 카라오케 공간, 투명한 예약, 안전한 운영, 유앤미 출근부·엔트리·웨이팅·초이스톡 확인 동선을 안내합니다.",

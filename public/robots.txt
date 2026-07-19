@@ -3,6 +3,6 @@ Allow: /
 Disallow: /api/
 Disallow: /healthz
 
-Host: https://gangnamyouandme.com
-Sitemap: https://gangnamyouandme.com/sitemap.xml
-Sitemap: https://gangnamyouandme.com/rss.xml
+Host: https://gangnamyounme.com
+Sitemap: https://gangnamyounme.com/sitemap.xml
+Sitemap: https://gangnamyounme.com/rss.xml
