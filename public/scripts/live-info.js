@@ -93,16 +93,29 @@
     entry: data?.entry || { content: [] },
   });
 
+  const logLiveSignalPayload = (label, payload) => {
+    console.log(`[LiveSignal] ${label} payload:`, payload);
+  };
+
+  const buildDirectLiveSignalUrl = (type, limit) => {
+    const apiUrl = new URL(DIRECT_LIVE_SIGNAL_ENDPOINT);
+    apiUrl.searchParams.set("storeNo", STORE_NO);
+    apiUrl.searchParams.set("type", type);
+    apiUrl.searchParams.set("limit", String(limit));
+    return apiUrl;
+  };
+
   const fetchDirectLiveSignal = async () => {
     const fetchType = async (type, limit) => {
-      const apiUrl = new URL(DIRECT_LIVE_SIGNAL_ENDPOINT);
-      apiUrl.searchParams.set("storeNo", STORE_NO);
-      apiUrl.searchParams.set("type", type);
-      apiUrl.searchParams.set("limit", String(limit));
+      const apiUrl = buildDirectLiveSignalUrl(type, limit);
+      console.log(`[LiveSignal] fetching direct ${type}: ${apiUrl.href}`);
 
       const response = await fetch(apiUrl, { cache: "no-store" });
       if (!response.ok) throw new Error(`Direct live signal request failed: ${response.status}`);
-      return response.json();
+
+      const payload = await response.json();
+      logLiveSignalPayload(`direct ${type}`, payload);
+      return payload;
     };
 
     const [room, entry] = await Promise.all([fetchType("room", 1), fetchType("entry", 200)]);
@@ -111,8 +124,10 @@
 
   const fetchLiveSignal = async () => {
     try {
+      console.log(`[LiveSignal] fetching proxy: ${LIVE_SIGNAL_ENDPOINT}`);
       const response = await fetch(LIVE_SIGNAL_ENDPOINT, { cache: "no-store" });
       const data = await response.json().catch(() => ({}));
+      logLiveSignalPayload("proxy", data);
       if (!response.ok) throw new Error(data.message || `Live signal request failed: ${response.status}`);
       return normalizeLiveSignal(data);
     } catch (proxyError) {
@@ -154,6 +169,8 @@
       const data = await fetchLiveSignal();
       const rooms = getContent(data.room);
       const entries = getContent(data.entry);
+      console.log("[LiveSignal] normalized room rows:", rooms);
+      console.log("[LiveSignal] normalized entry rows:", entries);
       const room = rooms[0] || {};
 
       roomCount.textContent = formatValue(room.roomInfo ?? room.availableRoom ?? room.availableRooms ?? room.roomCount);
