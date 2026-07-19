@@ -1,30 +1,25 @@
 export const siteMetadata = {
-  name: "강남 달리는토끼 공식 홈페이지 | Running Rabbit Official",
-  baseUrl: "https://gangnamdaltokki.com",
+  name: "강남 유앤미 공식 홈페이지 | Gangnam You&Me Official",
+  baseUrl: "https://gangnamyouandme.com",
   language: "ko",
   description:
-    "강남 달토 · 달리는토끼 공식 홈페이지. 프리미엄 라운지 & 카라오케 공간, 투명한 예약, 합법적이고 안전한 운영, 달토출근부·달토엔트리·달토웨이팅·달토초이스톡 확인 동선을 안내합니다.",
+    "강남 유앤미 공식 홈페이지. 프리미엄 라운지 & 카라오케 공간, 투명한 예약, 안전한 운영, 유앤미 출근부·엔트리·웨이팅·초이스톡 확인 동선을 안내합니다.",
   keywords: [
-    "달토",
-    "강남달토",
-    "강남 달토",
-    "러닝래빗",
-    "러닝레빗",
-    "달리는토끼",
-    "삼정호텔",
-    "달리는토끼 후기",
-    "달리는토끼 영업진",
-    "달리는토끼 주대",
-    "달토출근부",
-    "달토 엔트리",
-    "달토엔트리",
-    "달토웨이팅",
-    "달토 초이스톡",
-    "달토초이스톡",
-    "강남 달리는토끼",
-    "Running Rabbit",
+    "강남 유앤미",
+    "강남유앤미",
+    "유앤미",
+    "유엔미",
+    "ㅇㅇㅁ",
+    "강남룸",
+    "강남가라오케",
+    "강남쩜오",
+    "강남노래방",
     "프리미엄 라운지",
     "강남 라운지",
+    "유앤미 출근부",
+    "유앤미 엔트리",
+    "유앤미 웨이팅",
+    "유앤미 초이스톡",
     "공식 홈페이지",
   ],
 };
@@ -38,9 +33,9 @@ export const navigationLinks = [
 ];
 
 export const heroContent = {
-  heading: "강남 달토 · 달리는토끼 공식 홈페이지",
+  heading: "강남 유앤미 공식 홈페이지",
   subheading:
-    "프리미엄 라운지 & 카라오케 브랜드 \"Running Rabbit\"의 공간, 예약, 운영 철학과 달토출근부·달토엔트리·달토웨이팅·달토초이스톡 확인 동선을 한눈에 확인하세요.",
+    "프리미엄 라운지 & 카라오케 브랜드 강남 유앤미의 공간, 예약, 운영 철학과 출근부·엔트리·웨이팅·초이스톡 확인 동선을 한눈에 확인하세요.",
   cta: { label: "예약·문의하기", href: "#contact" },
 };
 
@@ -49,10 +44,10 @@ export const sections = [
     id: "brand",
     title: "브랜드 아이덴티티",
     summary:
-      "강남에서 주목받는 프리미엄 라운지 & 카라오케 브랜드, 달토·달리는토끼(Running Rabbit)의 공식 정보 허브입니다.",
+      "강남에서 주목받는 프리미엄 라운지 & 카라오케 브랜드, 유앤미의 공식 정보 허브입니다.",
     bullets: [
       "세련된 라운지 무드와 감각적인 조명 설계",
-      "합법·건전 운영을 지향하는 공식 채널",
+      "안전하고 투명한 운영을 지향하는 공식 채널",
       "브랜드 스토리와 공간 컨셉을 투명하게 안내",
     ],
   },
@@ -83,7 +78,7 @@ export const sections = [
     title: "예약 & 문의",
     summary: "방문 예정 시간, 인원, 원하는 분위기만 알려주시면 최적의 룸과 예상 금액을 안내드립니다.",
     bullets: [
-      "전화·메신저로 24시간 상담", 
+      "전화·메신저로 24시간 상담",
       "사전 예약 시 대기 최소화 및 맞춤 룸 배정",
       "이벤트/할인 여부 사전 안내로 투명한 비용 고지",
     ],
@@ -92,9 +87,9 @@ export const sections = [
     id: "policy",
     title: "운영 정책",
     summary:
-      "모든 방문객이 안심할 수 있도록 합법적이고 안전한 운영 원칙을 준수합니다.",
+      "모든 방문객이 안심할 수 있도록 안전한 운영 원칙을 준수합니다.",
     bullets: [
-      "불법·유사 성행위 및 미성년자 출입 금지",
+      "미성년자 출입 금지 및 방문객 안전 관리",
       "CCTV와 보안 인력 기반의 안전 관리(룸 내부 촬영 없음)",
       "개인정보 보호 및 결제 보안 절차 준수",
     ],
@@ -102,9 +97,9 @@ export const sections = [
 ];
 
 export const homeMeta = {
-  title: "강남 달토 · 달리는토끼 공식 홈페이지",
+  title: "강남 유앤미 공식 홈페이지",
   description:
-    "Running Rabbit 공식 사이트에서 프리미엄 라운지 공간, 예약 방법, 달토출근부·달토엔트리·달토웨이팅·달토초이스톡 확인 동선을 확인하세요.",
+    "강남 유앤미 공식 사이트에서 프리미엄 라운지 공간, 예약 방법, 출근부·엔트리·웨이팅·초이스톡 확인 동선을 확인하세요.",
   canonical: `${siteMetadata.baseUrl}/`,
   openGraph: {
     type: "website",
@@ -127,20 +122,17 @@ export const homeMeta = {
 };
 
 export const seoLandingPages = [
-  { slug: "dalto", title: "달토", description: "달토 뜻, 강남달토 위치, 예약 방법을 공식 홈페이지에서 확인하세요." },
-  { slug: "gangnam-dalto", title: "강남달토", description: "강남달토 공식 안내: 역삼동 삼정호텔 지하 위치, 픽업, 예약, 시설 정보." },
-  { slug: "running-rabbit", title: "러닝래빗·러닝레빗", description: "러닝래빗·러닝레빗으로 검색하는 Running Rabbit 공식 안내 페이지입니다." },
-  { slug: "dalineun-tokki", title: "달리는토끼", description: "달리는토끼 공식 정보: 브랜드 소개, 위치, 후기, 영업 안내, 예약 상담." },
-  { slug: "samjeong-hotel", title: "삼정호텔 달토", description: "삼정호텔 지하 강남달토 위치와 교통, 주차, 발렛, 픽업 안내." },
-  { slug: "reviews", title: "달리는토끼 후기", description: "달리는토끼 후기 확인 시 가격, 응대, 룸 컨디션 등 핵심 체크포인트를 안내합니다." },
-  { slug: "staff", title: "달리는토끼 영업진", description: "달리는토끼 영업진 및 예약 담당 상담 채널을 안내합니다." },
-  { slug: "price", title: "달리는토끼 주대", description: "달리는토끼 주대는 인원, 시간대, 코스에 따라 달라지며 예약 전 상담으로 안내합니다." },
-  { slug: "dalto-entry", title: "달토출근부·달토엔트리", description: "달토출근부와 달토엔트리 확인 동선, 오늘 출근 현황, 예약 전 체크포인트를 안내합니다." },
-  { slug: "dalto-waiting", title: "달토웨이팅", description: "달토웨이팅과 실시간 룸 현황을 확인하고 예약 전 대기 상황을 참고하세요." },
-  { slug: "dalto-choice-talk", title: "달토초이스톡", description: "달토초이스톡 확인 동선과 출근부·엔트리 기반 예약 상담 포인트를 안내합니다." },
+  { slug: "youandme", title: "유앤미", description: "강남 유앤미 위치, 예약 방법, 시설 정보를 공식 홈페이지에서 확인하세요." },
+  { slug: "gangnam-youandme", title: "강남유앤미", description: "강남유앤미 공식 안내: 예약, 시설, 위치, 주차, 픽업 안내." },
+  { slug: "youandme-entry", title: "유앤미 출근부·엔트리", description: "유앤미 출근부와 엔트리 확인 동선, 오늘 출근 현황, 예약 전 체크포인트를 안내합니다." },
+  { slug: "youandme-waiting", title: "유앤미 웨이팅", description: "유앤미 웨이팅과 실시간 룸 현황을 확인하고 예약 전 대기 상황을 참고하세요." },
+  { slug: "youandme-choice-talk", title: "유앤미 초이스톡", description: "유앤미 초이스톡 확인 동선과 출근부·엔트리 기반 예약 상담 포인트를 안내합니다." },
+  { slug: "reviews", title: "유앤미 후기", description: "유앤미 후기 확인 시 가격, 응대, 룸 컨디션 등 핵심 체크포인트를 안내합니다." },
+  { slug: "staff", title: "유앤미 영업진", description: "유앤미 영업진 및 예약 담당 상담 채널을 안내합니다." },
+  { slug: "price", title: "유앤미 주대", description: "유앤미 주대는 인원, 시간대, 코스에 따라 달라지며 예약 전 상담으로 안내합니다." },
 ];
 
-export const sitemapLastModified = "2026-07-15";
+export const sitemapLastModified = "2026-07-19";
 
 export const sitemapEntries = [
   {
@@ -159,8 +151,8 @@ export const sitemapEntries = [
 
 export const rssFeedMetadata = {
   path: "/rss.xml",
-  title: "강남달토 실시간 정보·후기 RSS",
-  description: "강남달토 달리는토끼 공식 사이트의 달토출근부, 달토엔트리, 달토웨이팅, 달토초이스톡 및 커뮤니티 후기 최신 업데이트입니다.",
-  managingEditor: "Running Rabbit Official",
+  title: "강남유앤미 실시간 정보·후기 RSS",
+  description: "강남유앤미 공식 사이트의 출근부, 엔트리, 웨이팅, 초이스톡 및 커뮤니티 후기 최신 업데이트입니다.",
+  managingEditor: "Gangnam You&Me Official",
   ttlMinutes: 30,
 };

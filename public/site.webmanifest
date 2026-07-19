@@ -1,11 +1,11 @@
 {
-  "name": "강남 달토 | Running Rabbit",
-  "short_name": "Running Rabbit",
+  "name": "강남 유앤미 | Gangnam You&Me",
+  "short_name": "You&Me",
   "icons": [
     {
       "src": "/favicon.png",
       "sizes": "any",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any"
     }
   ],
