@@ -8,7 +8,6 @@
   let renderInProgress = false;
 
   const getElements = () => ({
-    status: $("live-info-status"),
     roomUpdated: $("live-room-updated"),
     roomCount: $("live-room-count"),
     waitCount: $("live-wait-count"),
@@ -18,7 +17,6 @@
   });
 
   const hasRequiredElements = (elements) =>
-    elements.status &&
     elements.roomUpdated &&
     elements.roomCount &&
     elements.waitCount &&
@@ -52,6 +50,10 @@
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#39;");
   const formatValue = (value) => (value === null || value === undefined || value === "" ? "-" : String(value));
+  const formatRoomCount = (value) => {
+    const formattedValue = formatValue(value);
+    return formattedValue === "999" ? "여유" : formattedValue;
+  };
   const toDate = (value) => {
     if (!value) return null;
     const date = new Date(String(value).replace(" ", "T"));
@@ -168,20 +170,19 @@
     const elements = getElements();
     if (!hasRequiredElements(elements)) return false;
 
-    const { status, roomUpdated, roomCount, waitCount, roomDetail, entryCount, entryList } = elements;
+    const { roomUpdated, roomCount, waitCount, roomDetail, entryCount, entryList } = elements;
     const rooms = getContent(data.room);
     const entries = getContent(data.entry);
     console.log("[LiveSignal] normalized room rows:", rooms);
     console.log("[LiveSignal] normalized entry rows:", entries);
     const room = rooms[0] || {};
 
-    roomCount.textContent = formatValue(room.roomInfo ?? room.availableRoom ?? room.availableRooms ?? room.roomCount);
+    roomCount.textContent = formatRoomCount(room.roomInfo ?? room.availableRoom ?? room.availableRooms ?? room.roomCount);
     waitCount.textContent = formatValue(room.waitInfo ?? room.waiting ?? room.waitCount);
     roomUpdated.textContent = formatUpdatedAt(room.snapshotAt || room.updatedAt || room.createdAt);
     entryCount.textContent = `총 ${getTotalElements(data.entry, entries.length)}명`;
     renderRoomDetails(roomDetail, room);
     renderEntries(entryList, entries);
-    status.textContent = `storeNo ${data.storeNo || STORE_NO} 기준 실시간 정보를 불러왔습니다.`;
     return true;
   };
 
@@ -189,7 +190,6 @@
     const elements = getElements();
     if (!hasRequiredElements(elements)) return;
 
-    elements.status.textContent = "실시간 정보를 불러오지 못했습니다. 잠시 후 다시 확인해 주세요.";
     elements.roomUpdated.textContent = "확인 실패";
     elements.roomDetail.innerHTML = '<p class="live-empty">룸 상세 정보를 불러오지 못했습니다.</p>';
     elements.entryList.innerHTML = '<p class="live-empty">엔트리 정보를 불러오지 못했습니다.</p>';
