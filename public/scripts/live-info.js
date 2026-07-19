@@ -69,15 +69,6 @@
     }).format(date);
   };
 
-  const formatEntryTime = (value) => {
-    const date = toDate(value);
-    if (!date) return "출근";
-    return new Intl.DateTimeFormat("ko-KR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date);
-  };
-
   const parseRoomDetail = (value) => {
     if (!value) return [];
 
@@ -168,8 +159,7 @@
     entryList.innerHTML = entries
       .map((entry) => {
         const name = entry.workerName || entry.name || entry.nickname || "이름 미공개";
-        const detail = entry.entryStatus || entry.status || entry.workTime || entry.time || formatEntryTime(entry.createdAt);
-        return `<span class="entry-chip"><span>${escapeHtml(name)}</span><strong>${escapeHtml(detail)}</strong></span>`;
+        return `<span class="entry-chip"><span>${escapeHtml(name)}</span></span>`;
       })
       .join("");
   };
