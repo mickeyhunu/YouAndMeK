@@ -3,7 +3,7 @@ export const siteMetadata = {
   baseUrl: "https://gangnamyounme.com",
   language: "ko",
   description:
-    "강남 유앤미 공식 홈페이지. 프리미엄 라운지 & 카라오케 공간, 투명한 예약, 안전한 운영, 유앤미 출근부·엔트리·웨이팅·초이스톡 확인 동선을 안내합니다.",
+    "강남 유앤미 공식 홈페이지. 서울특별시 서초구 잠원동 18-8 지하 1,2층, 신사역 도보 3분 거리에 위치한 프리미엄 라운지 & 카라오케 공간을 안내합니다.",
   keywords: [
     "강남 유앤미",
     "강남유앤미",
@@ -37,7 +37,7 @@ export const navigationLinks = [
 export const heroContent = {
   heading: "강남 유앤미 공식 홈페이지",
   subheading:
-    "프리미엄 라운지 & 카라오케 브랜드 강남 유앤미의 공간, 예약, 운영 철학과 출근부·엔트리·웨이팅·초이스톡 확인 동선을 한눈에 확인하세요.",
+    "신사역 도보 3분, 서울특별시 서초구 잠원동 18-8 지하 1,2층에 위치한 프리미엄 라운지 & 카라오케 브랜드 강남 유앤미의 공간과 예약 안내를 확인하세요.",
   cta: { label: "예약·문의하기", href: "#contact" },
 };
 
@@ -124,8 +124,8 @@ export const homeMeta = {
 };
 
 export const seoLandingPages = [
-  { slug: "youandme", title: "유앤미", description: "강남 유앤미 위치, 예약 방법, 시설 정보를 공식 홈페이지에서 확인하세요." },
-  { slug: "gangnam-youandme", title: "강남유앤미", description: "강남유앤미 공식 안내: 예약, 시설, 위치, 주차, 픽업 안내." },
+  { slug: "youandme", title: "유앤미", description: "서울특별시 서초구 잠원동 18-8 지하 1,2층, 신사역 도보 3분 위치와 예약 방법, 시설 정보를 공식 홈페이지에서 확인하세요." },
+  { slug: "gangnam-youandme", title: "강남유앤미", description: "강남유앤미 공식 안내: 서울특별시 서초구 잠원동 18-8 지하 1,2층, 신사역 도보 3분 위치, 예약, 시설, 주차, 픽업 안내." },
   { slug: "youandme-entry", title: "유앤미 출근부·엔트리", description: "유앤미 출근부와 엔트리 확인 동선, 오늘 출근 현황, 예약 전 체크포인트를 안내합니다." },
   { slug: "youandme-waiting", title: "유앤미 웨이팅", description: "유앤미 웨이팅과 실시간 룸 현황을 확인하고 예약 전 대기 상황을 참고하세요." },
   { slug: "youandme-choice-talk", title: "유앤미 초이스톡", description: "유앤미 초이스톡 확인 동선과 출근부·엔트리 기반 예약 상담 포인트를 안내합니다." },
