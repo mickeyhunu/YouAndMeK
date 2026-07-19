@@ -88,6 +88,7 @@ const COMMUNITY_REVIEW_API = "https://nightmens.com/api/posts/search-signal";
 const COMMUNITY_REVIEW_KEYWORDS = new Set(["유앤미", "유엔미", "ㅇㅇㅁ"]);
 const COMMUNITY_REVIEW_FEED_KEYWORDS = ["유앤미", "유엔미", "ㅇㅇㅁ"];
 const LIVE_SIGNAL_API = "https://nightmens.com/api/live/signal";
+const LIVE_SIGNAL_STORE_NO = "4";
 
 const toValidDate = (value) => {
   if (!value) return new Date();
@@ -144,7 +145,7 @@ const fetchLiveSignalFeedItems = async () => {
   const [roomResponse, entryResponse] = await Promise.allSettled(
     ["room", "entry"].map((type) => {
       const apiUrl = new URL(LIVE_SIGNAL_API);
-      apiUrl.searchParams.set("storeNo", "1");
+      apiUrl.searchParams.set("storeNo", LIVE_SIGNAL_STORE_NO);
       apiUrl.searchParams.set("type", type);
       apiUrl.searchParams.set("limit", type === "room" ? "1" : "200");
       return fetch(apiUrl).then((response) => {
@@ -205,6 +206,42 @@ export const renderRssFeed = async (_req, res) => {
 
   res.set("Cache-Control", "public, max-age=1800");
   res.type("application/rss+xml").send(xml);
+};
+
+export const renderLiveSignal = async (_req, res) => {
+  try {
+    const [roomResponse, entryResponse] = await Promise.all(
+      ["room", "entry"].map(async (type) => {
+        const apiUrl = new URL(LIVE_SIGNAL_API);
+        apiUrl.searchParams.set("storeNo", LIVE_SIGNAL_STORE_NO);
+        apiUrl.searchParams.set("type", type);
+        apiUrl.searchParams.set("limit", type === "room" ? "1" : "200");
+
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          const error = new Error(`Failed to fetch ${type} live signal`);
+          error.status = response.status;
+          throw error;
+        }
+
+        return response.json();
+      })
+    );
+
+    res.set("Cache-Control", "no-store");
+    res.json({
+      storeNo: LIVE_SIGNAL_STORE_NO,
+      room: roomResponse,
+      entry: entryResponse,
+    });
+  } catch (error) {
+    console.error("Live signal fetch failed:", error);
+    res.status(error.status || 502).json({
+      ok: false,
+      message: "Failed to fetch live signal",
+      storeNo: LIVE_SIGNAL_STORE_NO,
+    });
+  }
 };
 
 export const renderCommunityReviews = async (req, res) => {

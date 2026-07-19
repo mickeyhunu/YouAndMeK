@@ -3,6 +3,7 @@ import {
   renderCommunityReviews,
   renderHealth,
   renderHomePage,
+  renderLiveSignal,
   renderRobots,
   renderRssFeed,
   renderSeoLandingPage,
@@ -16,6 +17,7 @@ router.get("/sitemap.xml", renderSitemap);
 router.get("/rss.xml", renderRssFeed);
 router.get("/robots.txt", renderRobots);
 router.get("/healthz", renderHealth);
+router.get("/api/live-signal", renderLiveSignal);
 router.get("/api/community-reviews", renderCommunityReviews);
 router.get("/:slug", renderSeoLandingPage);
 
