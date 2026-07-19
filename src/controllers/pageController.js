@@ -24,7 +24,7 @@ export const renderSeoLandingPage = (req, res, next) => {
     .readFileSync(homePagePath, "utf8")
     .replace(
       /<title>.*?<\/title>/,
-      `<title>${page.title} | 강남달토 달리는토끼 공식 안내</title>`
+      `<title>${page.title} | 강남 유앤미 공식 안내</title>`
     )
     .replace(
       /<meta name="description" content=".*?" \/>/,
@@ -85,8 +85,8 @@ export const renderHealth = (_req, res) => {
 };
 
 const COMMUNITY_REVIEW_API = "https://nightmens.com/api/posts/search-signal";
-const COMMUNITY_REVIEW_KEYWORDS = new Set(["달토", "ㄷㅌ"]);
-const COMMUNITY_REVIEW_FEED_KEYWORDS = ["달토", "ㄷㅌ"];
+const COMMUNITY_REVIEW_KEYWORDS = new Set(["유앤미", "유엔미", "ㅇㅇㅁ"]);
+const COMMUNITY_REVIEW_FEED_KEYWORDS = ["유앤미", "유엔미", "ㅇㅇㅁ"];
 const LIVE_SIGNAL_API = "https://nightmens.com/api/live/signal";
 
 const toValidDate = (value) => {
@@ -209,8 +209,8 @@ export const renderRssFeed = async (_req, res) => {
 
 export const renderCommunityReviews = async (req, res) => {
   try {
-    const keyword = typeof req.query.keyword === "string" ? req.query.keyword.trim() : "달토";
-    const safeKeyword = COMMUNITY_REVIEW_KEYWORDS.has(keyword) ? keyword : "달토";
+    const keyword = typeof req.query.keyword === "string" ? req.query.keyword.trim() : "유앤미";
+    const safeKeyword = COMMUNITY_REVIEW_KEYWORDS.has(keyword) ? keyword : "유앤미";
     const apiUrl = new URL(COMMUNITY_REVIEW_API);
     apiUrl.searchParams.set("board", "후기");
     apiUrl.searchParams.set("keyword", safeKeyword);
