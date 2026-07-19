@@ -165,6 +165,31 @@ const fetchLiveSignal = async (type, limit) => {
   }
 };
 
+const normalizeSignalPayload = (payload) => {
+  let current = payload;
+
+  for (let depth = 0; depth < 4; depth += 1) {
+    if (!current || typeof current !== "object" || Array.isArray(current)) break;
+    if (Array.isArray(current.content)) return current;
+    if (Array.isArray(current.items)) return { ...current, content: current.items };
+    if (Array.isArray(current.list)) return { ...current, content: current.list };
+    if (Array.isArray(current.rows)) return { ...current, content: current.rows };
+    current = current.data ?? current.result ?? current.body ?? current.payload;
+  }
+
+  if (Array.isArray(payload)) {
+    return { content: payload, totalElements: payload.length };
+  }
+
+  return { content: [], totalElements: 0 };
+};
+
+const getSignalContent = (payload) => normalizeSignalPayload(payload).content;
+const getSignalTotal = (payload, fallback) => {
+  const normalized = normalizeSignalPayload(payload);
+  return normalized.totalElements ?? normalized.totalCount ?? normalized.total ?? normalized.count ?? fallback;
+};
+
 const emptyLiveSignal = () => ({ content: [], totalElements: 0 });
 
 const fetchLiveSignalFeedItems = async () => {
@@ -175,7 +200,7 @@ const fetchLiveSignalFeedItems = async () => {
 
   const items = [];
   if (roomResponse.status === "fulfilled") {
-    const room = Array.isArray(roomResponse.value.content) ? roomResponse.value.content[0] : null;
+    const room = getSignalContent(roomResponse.value)[0] || null;
     if (room) {
       items.push({
         title: "[실시간] 룸·웨이팅 현황 업데이트",
@@ -188,13 +213,13 @@ const fetchLiveSignalFeedItems = async () => {
   }
 
   if (entryResponse.status === "fulfilled") {
-    const entries = Array.isArray(entryResponse.value.content) ? entryResponse.value.content : [];
+    const entries = getSignalContent(entryResponse.value);
     const names = entries.map((entry) => entry.workerName).filter(Boolean).slice(0, 12).join(", ");
     items.push({
       title: "[실시간] 오늘 출근부 업데이트",
-      description: `오늘 출근부 총 ${entryResponse.value.totalElements ?? entries.length}명${names ? `: ${names}` : ""}`,
+      description: `오늘 출근부 총 ${getSignalTotal(entryResponse.value, entries.length)}명${names ? `: ${names}` : ""}`,
       link: `${siteMetadata.baseUrl}/#live-info`,
-      guid: `live-entry-${entryResponse.value.totalElements ?? entries.length}-${new Date().toISOString().slice(0, 10)}`,
+      guid: `live-entry-${getSignalTotal(entryResponse.value, entries.length)}-${new Date().toISOString().slice(0, 10)}`,
       pubDate: new Date(),
     });
   }
@@ -243,8 +268,8 @@ export const renderLiveSignal = async (_req, res) => {
     ok: !(roomFailed && entryFailed),
     message: roomFailed && entryFailed ? "Failed to fetch live signal" : undefined,
     storeNo: LIVE_SIGNAL_STORE_NO,
-    room: roomFailed ? emptyLiveSignal() : roomResult.value,
-    entry: entryFailed ? emptyLiveSignal() : entryResult.value,
+    room: roomFailed ? emptyLiveSignal() : normalizeSignalPayload(roomResult.value),
+    entry: entryFailed ? emptyLiveSignal() : normalizeSignalPayload(entryResult.value),
     errors: {
       room: roomFailed,
       entry: entryFailed,

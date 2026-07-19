@@ -16,7 +16,31 @@
     return;
   }
 
-  const getContent = (payload) => (Array.isArray(payload?.content) ? payload.content : []);
+  const unwrapPayload = (payload) => {
+    let current = payload;
+    for (let depth = 0; depth < 4; depth += 1) {
+      if (!current || typeof current !== "object" || Array.isArray(current)) break;
+      if (Array.isArray(current.content)) return current;
+      if (Array.isArray(current.items)) return { ...current, content: current.items };
+      if (Array.isArray(current.list)) return { ...current, content: current.list };
+      if (Array.isArray(current.rows)) return { ...current, content: current.rows };
+      current = current.data ?? current.result ?? current.body ?? current.payload;
+    }
+    return { content: [] };
+  };
+
+  const getContent = (payload) => unwrapPayload(payload).content;
+  const getTotalElements = (payload, fallback) => {
+    const normalized = unwrapPayload(payload);
+    return normalized.totalElements ?? normalized.totalCount ?? normalized.total ?? normalized.count ?? fallback;
+  };
+  const escapeHtml = (value) =>
+    String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
   const formatValue = (value) => (value === null || value === undefined || value === "" ? "-" : String(value));
   const toDate = (value) => {
     if (!value) return null;
@@ -106,7 +130,7 @@
     }
 
     roomDetail.innerHTML = `<div class="room-floor"><div class="room-type-grid">${roomEntries
-      .map(([key, value]) => `<div class="room-type"><span>${formatValue(key)}</span><strong>${formatValue(value)}</strong></div>`)
+      .map(([key, value]) => `<div class="room-type"><span>${escapeHtml(formatValue(key))}</span><strong>${escapeHtml(formatValue(value))}</strong></div>`)
       .join("")}</div></div>`;
   };
 
@@ -120,7 +144,7 @@
       .map((entry) => {
         const name = entry.workerName || entry.name || entry.nickname || "이름 미공개";
         const detail = entry.entryStatus || entry.status || entry.workTime || entry.time || formatEntryTime(entry.createdAt);
-        return `<span class="entry-chip"><span>${name}</span><strong>${detail}</strong></span>`;
+        return `<span class="entry-chip"><span>${escapeHtml(name)}</span><strong>${escapeHtml(detail)}</strong></span>`;
       })
       .join("");
   };
@@ -135,7 +159,7 @@
       roomCount.textContent = formatValue(room.roomInfo ?? room.availableRoom ?? room.availableRooms ?? room.roomCount);
       waitCount.textContent = formatValue(room.waitInfo ?? room.waiting ?? room.waitCount);
       roomUpdated.textContent = formatUpdatedAt(room.snapshotAt || room.updatedAt || room.createdAt);
-      entryCount.textContent = `총 ${data.entry?.totalElements ?? entries.length}명`;
+      entryCount.textContent = `총 ${getTotalElements(data.entry, entries.length)}명`;
       renderRoomDetails(room);
       renderEntries(entries);
       status.textContent = `storeNo ${data.storeNo || STORE_NO} 기준 실시간 정보를 불러왔습니다.`;
