@@ -55,5 +55,5 @@ app.use((err, req, res, next) => {
   res.status(status).json(payload);
 });
 
-const PORT = Number(process.env.PORT || 4000);
+const PORT = Number(process.env.PORT || 4001);
 app.listen(PORT, () => console.log(`Server listening on :${PORT}`));
