@@ -1,3 +1,4 @@
+if(window.devToolsBlockGuard&&window.devToolsBlockGuard.detectAndBlock()){throw new Error("Developer tools access blocked");}
 // Generated application bundle. Formatted with conservative line breaks for repository readability.
 function vx(s,c){for(var r=0;r<c.length;r++){const o=c[r];if(typeof o!="string"&&!Array.isArray(o)){for(const d in o)if(d!=="default"&&!(d in s)){const m=Object.getOwnPropertyDescriptor(o,d);m&&Object.defineProperty(s,d,m.get?m:{enumerable:!0,get:()=>o[d]})}}}
 return Object.freeze(Object.defineProperty(s,Symbol.toStringTag,{value:"Module"}))}(function(){const c=document.createElement("link").relList;if(c&&c.supports&&c.supports("modulepreload"))return;for(const d of document.querySelectorAll('link[rel="modulepreload"]'))o(d);new MutationObserver(d=>{for(const m of d)if(m.type==="childList")for(const x of m.addedNodes)x.tagName==="LINK"&&x.rel==="modulepreload"&&o(x)}).observe(document,{childList:!0,subtree:!0 });
