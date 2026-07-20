@@ -24,11 +24,16 @@
     }
     return Array.isArray(payload) ? payload : [];
   };
+  const parseReviewTime = (review) => {
+    const rawDate = review?.createdAt || review?.updatedAt || review?.date;
+    if (!rawDate) return 0;
+    const date = new Date(String(rawDate).replace(" ", "T"));
+    return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+  };
   const formatDate = (value) => {
-    if (!value) return "미드나잇맨즈 후기";
-    const date = new Date(String(value).replace(" ", "T"));
-    if (Number.isNaN(date.getTime())) return "미드나잇맨즈 후기";
-    return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
+    const timestamp = parseReviewTime({ createdAt: value });
+    if (!timestamp) return "미드나잇맨즈 후기";
+    return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(timestamp);
   };
   const normalizeUrl = (value) => {
     if (!value) return "https://nightmens.com/reviews";
@@ -52,6 +57,7 @@
     return responses.flat()
       .filter((review) => review && (review.id || review.title || review.content))
       .filter((review, index, all) => all.findIndex((item) => String(item.id ?? item.url ?? item.title) === String(review.id ?? review.url ?? review.title)) === index)
+      .sort((a, b) => parseReviewTime(b) - parseReviewTime(a))
       .slice(0, 6);
   };
   const fetchReviews = async () => {
