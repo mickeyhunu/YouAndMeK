@@ -6,9 +6,23 @@ import { rssFeedMetadata, seoLandingPages, siteMetadata, sitemapEntries } from "
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const homePagePath = path.join(__dirname, "../views/home.html");
+const devtoolsGuardScriptTag = '<script defer src="/scripts/devtools-guard.js"></script>';
+
+const isLocalDevelopment = () => process.env.NODE_ENV !== "production";
+
+const injectDevtoolsGuard = (html) => {
+  if (isLocalDevelopment() || html.includes(devtoolsGuardScriptTag)) {
+    return html;
+  }
+
+  return html.replace("</head>", `  ${devtoolsGuardScriptTag}
+                </head>`);
+};
+
+const readHomePageHtml = () => fs.readFileSync(homePagePath, "utf8");
 
 export const renderHomePage = (_req, res) => {
-  res.sendFile(homePagePath);
+  res.type("html").send(injectDevtoolsGuard(readHomePageHtml()));
 };
 
 export const renderSeoLandingPage = (req, res, next) => {
@@ -20,8 +34,7 @@ export const renderSeoLandingPage = (req, res, next) => {
     return;
   }
 
-  const html = fs
-    .readFileSync(homePagePath, "utf8")
+  const html = injectDevtoolsGuard(readHomePageHtml())
     .replace(
       /<title>.*?<\/title>/,
       `<title>${page.title} | 강남 유앤미 공식 안내</title>`
