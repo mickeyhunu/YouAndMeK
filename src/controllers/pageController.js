@@ -152,7 +152,6 @@ const fetchLiveSignal = async (type, limit) => {
   const timeout = setTimeout(() => controller.abort(), LIVE_SIGNAL_FETCH_TIMEOUT_MS);
 
   try {
-    console.log(`[LiveSignal] fetching ${type}: ${apiUrl.href}`);
     const response = await fetch(apiUrl, { signal: controller.signal });
     if (!response.ok) {
       const error = new Error(`Failed to fetch ${type} live signal`);
@@ -161,7 +160,6 @@ const fetchLiveSignal = async (type, limit) => {
     }
 
     const payload = await response.json();
-    console.log(`[LiveSignal] ${type} payload:`, payload);
     return payload;
   } finally {
     clearTimeout(timeout);
